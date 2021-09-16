@@ -40,6 +40,14 @@ ol, ul {
   background: #ddd;
 }
 
+.draw {
+  text-align: center;
+  width: 102px;
+  height: 102px;
+  background-color: #eee;
+  padding: 20px;
+}
+
 .game {
   display: flex;
   flex-direction: row;
