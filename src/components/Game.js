@@ -8,11 +8,10 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
-        location: "", // (row, col)
+        locationIdx: null, // the index of the square
       }],
       stepNumber: 0,
       xIsNext: true,
-      moves: [],
     }
   }
 
@@ -23,28 +22,14 @@ class Game extends React.Component {
     if (this.calculateWinner(squares) || squares[i]) {
       return;
     }
-    const row = Math.floor(i / 3) + 1;
-    const col = i % 3 + 1;
-    const currentLocation = `(${row}, ${col})`
-    const moves = history.map((step, move) => {
-      const desc = move ?
-        `Go to move # ${move} ${step.location}` :
-        `Go to game start`
-      return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
-      )
-    })
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
       history: history.concat([{
         squares,
-        location: currentLocation,
+        locationIdx: i,
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
-      moves,
     });
   }
 
@@ -79,6 +64,18 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = this.calculateWinner(current.squares);
+    const moves = history.map((step, move) => {
+      const row = Math.floor(step.locationIdx / 3) + 1;
+      const col = step.locationIdx % 3 + 1;
+      const desc = move ?
+        `Go to move # ${move} (${col}, ${row})` :
+        `Go to game start`
+      return (
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+        </li>
+      )
+    })
 
     let status;
     if (winner) {
@@ -97,7 +94,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{ status }</div>
-          <ol>{ this.state.moves }</ol>
+          <ol>{ moves }</ol>
         </div>
       </div>
     );
